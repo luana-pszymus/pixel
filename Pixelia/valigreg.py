@@ -13,7 +13,7 @@ def validar_polimnia():
     print("--- CONEXÃO POLÍMNIA (VIA GROQ CLOUD 2026) ---")
     
     if not CHAVE_GROQ:
-        print("\n❌ ERRO: Chave API não encontrada no arquivo .env!")
+        print("\n ERRO: Chave API não encontrada no arquivo .env!")
         print("Crie um arquivo chamado .env e coloque: GROQ_API_KEY=sua_chave")
         return
 
@@ -41,7 +41,7 @@ def validar_polimnia():
         print("STATUS: CONEXÃO VALIDADA E SEGURA!")
 
     except Exception as e:
-        print(f"\n❌ Erro técnico ao conectar: {e}")
+        print(f"\n Erro técnico ao conectar: {e}")
 
 if __name__ == "__main__":
     validar_polimnia()
