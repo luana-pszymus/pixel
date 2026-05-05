@@ -18,6 +18,7 @@ def configurar_banco():
         conn = get_connection()
         cursor = conn.cursor()
         
+        # Criação da tabela para histórico técnico de Pixel Art
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS interacoes (
                 id SERIAL PRIMARY KEY,

@@ -19,19 +19,31 @@ def perguntar():
     pergunta = request.json.get('pergunta')
     
     try:
-        # 1. Busca resposta na Groq
+        # Chamada técnica à IA Polímnia
         completion = client.chat.completions.create(
             model="llama-3.1-8b-instant",
-            messages=[{"role": "user", "content": pergunta}]
+            messages=[
+                {
+                    "role": "system", 
+                    "content": (
+                        "Você é o Sistema Polímnia, especialista técnico em padronização de Pixel Art. "
+                        "Sua tarefa é converter conceitos em guias práticos. "
+                        "Sempre forneça: 1) Paletas em HEX. 2) Regras de iluminação/sombreamento. "
+                        "3) Sugestão de resolução (ex: 16x16, 32x32). Seja objetivo e técnico."
+                    )
+                },
+                {"role": "user", "content": pergunta}
+            ],
+            temperature=0.3
         )
         resposta = completion.choices[0].message.content
 
-        # 2. Salva no Banco de Dados
+        # Salvando a diretriz no PostgreSQL (Persistência)
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO interacoes (usuario, pergunta, resposta) VALUES (%s, %s, %s)",
-            ("Ana/Luana", pergunta, resposta)
+            ("Equipe Polímnia", pergunta, resposta)
         )
         conn.commit()
         cursor.close()

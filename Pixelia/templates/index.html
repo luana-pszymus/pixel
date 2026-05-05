@@ -2,37 +2,67 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Polímnia - Pixelia</title>
+    <title>Polímnia - Gestão Técnica de Pixel Art</title>
     <style>
-        body { font-family: sans-serif; background: #121212; color: white; text-align: center; padding: 50px; }
-        #chat { background: #1e1e1e; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; }
-        input { width: 80%; padding: 10px; border-radius: 5px; border: none; }
-        button { padding: 10px 20px; cursor: pointer; background: #6200ee; color: white; border: none; border-radius: 5px; }
-        .log { margin-top: 20px; text-align: left; font-size: 0.9em; color: #bbb; }
+        body { 
+            background-color: #000000; font-family: 'Segoe UI', sans-serif; 
+            margin: 0; padding: 40px; display: flex; justify-content: center;
+        }
+        .container {
+            width: 100%; max-width: 800px; background: white;
+            padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        header { border-bottom: 2px solid #2c3e50; margin-bottom: 25px; padding-bottom: 10px; }
+        h1 { color: #2c3e50; margin: 0; font-size: 24px; }
+        .subtitle { color: #666; font-size: 14px; }
+        
+        textarea { 
+            width: 100%; height: 120px; padding: 15px; border-radius: 6px;
+            border: 1px solid #ddd; font-size: 16px; resize: none; box-sizing: border-box;
+        }
+        button { 
+            width: 100%; background: #360069; color: white; border: none; 
+            padding: 15px; border-radius: 6px; cursor: pointer; font-weight: bold;
+            margin-top: 15px; transition: 0.3s;
+        }
+        button:hover { background: #310069; }
+        
+        #resultado { 
+            margin-top: 30px; padding: 20px; background: #f1f3f5;
+            border-left: 5px solid #2c3e50; border-radius: 4px;
+            white-space: pre-wrap; font-family: 'Consolas', monospace; display: none;
+        }
     </style>
 </head>
 <body>
-    <h1>Polímnia IA</h1>
-    <div id="chat">
-        <input type="text" id="pergunta" placeholder="Pergunte algo para Polímnia...">
-        <button onclick="enviar()">Enviar</button>
-        <p id="resposta"></p>
+    <div class="container">
+        <header>
+            <h1>Projeto Polímnia</h1>
+            <p class="subtitle">Padronização e Gestão de Ativos Visuais (Ana Vitória & Luana Gabrielly)</p>
+        </header>
+
+        <textarea id="pergunta" placeholder="Descreva o ativo para gerar a paleta técnica..."></textarea>
+        <button onclick="gerarDiretriz()">GERAR GUIA TÉCNICO</button>
+
+        <div id="resultado"></div>
     </div>
 
     <script>
-        async function enviar() {
+        async function gerarDiretriz() {
             const pergunta = document.getElementById('pergunta').value;
-            const respElement = document.getElementById('resposta');
-            respElement.innerText = "Pensando...";
+            const box = document.getElementById('resultado');
+            if(!pergunta) return;
+
+            box.style.display = "block";
+            box.innerText = "Consultando IA e registrando no PostgreSQL...";
 
             const response = await fetch('/perguntar', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ pergunta: pergunta })
             });
-            
             const data = await response.json();
-            respElement.innerText = data.resposta || "Erro: " + data.erro;
+            box.innerText = data.resposta || "Erro técnico detectado.";
         }
     </script>
 </body>
