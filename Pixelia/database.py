@@ -17,8 +17,6 @@ def configurar_banco():
     try:
         conn = get_connection()
         cursor = conn.cursor()
-        
-        # Criação da tabela para histórico técnico de Pixel Art
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS interacoes (
                 id SERIAL PRIMARY KEY,
@@ -28,13 +26,12 @@ def configurar_banco():
                 data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         ''')
-        
         conn.commit()
         cursor.close()
         conn.close()
-        print("✅ Banco Postgres conectado e tabelas criadas!")
+        print("✅ Banco Postgres conectado!")
     except Exception as e:
-        print(f"❌ Erro no Postgres: {e}")
+        print(f"Erro: {e}")
 
 if __name__ == "__main__":
     configurar_banco()
