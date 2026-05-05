@@ -43,6 +43,24 @@ def validar_polimnia():
     except Exception as e:
         print(f"\n Erro técnico ao conectar: {e}")
 
+def salvar_no_postgres(pergunta, resposta):
+    try:
+        # Importe a função de conexão do database.py ou use direto aqui
+        from database import get_connection
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # ITEM 3: Inserção de dados
+        sql = "INSERT INTO interacoes (usuario, pergunta, resposta) VALUES (%s, %s, %s)"
+        cursor.execute(sql, ("Ana/Luana", pergunta, resposta))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        print("Log salvo no PostgreSQL!")
+    except Exception as e:
+        print(f"Erro ao salvar: {e}")
+
 if __name__ == "__main__":
     validar_polimnia()
 
