@@ -64,4 +64,4 @@ def salvar_no_postgres(pergunta, resposta):
 if __name__ == "__main__":
     validar_polimnia()
 
-    
+    #teste apenas
