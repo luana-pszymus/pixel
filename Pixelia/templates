@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Polímnia - Pixelia</title>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: white; text-align: center; padding: 50px; }
+        #chat { background: #1e1e1e; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; }
+        input { width: 80%; padding: 10px; border-radius: 5px; border: none; }
+        button { padding: 10px 20px; cursor: pointer; background: #6200ee; color: white; border: none; border-radius: 5px; }
+        .log { margin-top: 20px; text-align: left; font-size: 0.9em; color: #bbb; }
+    </style>
+</head>
+<body>
+    <h1>Polímnia IA</h1>
+    <div id="chat">
+        <input type="text" id="pergunta" placeholder="Pergunte algo para Polímnia...">
+        <button onclick="enviar()">Enviar</button>
+        <p id="resposta"></p>
+    </div>
+
+    <script>
+        async function enviar() {
+            const pergunta = document.getElementById('pergunta').value;
+            const respElement = document.getElementById('resposta');
+            respElement.innerText = "Pensando...";
+
+            const response = await fetch('/perguntar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pergunta: pergunta })
+            });
+            
+            const data = await response.json();
+            respElement.innerText = data.resposta || "Erro: " + data.erro;
+        }
+    </script>
+</body>
+</html>

@@ -1,67 +1,46 @@
 import os
-import sys
+from flask import Flask, render_template, request, jsonify
 from groq import Groq
 from dotenv import load_dotenv
+from database import get_connection, configurar_banco
 
-# 1. Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
+configurar_banco()
 
-# 2. Pega a chave de forma segura (sem expor no código)
-CHAVE_GROQ = os.getenv("GROQ_API_KEY")
+app = Flask(__name__)
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-def validar_polimnia():
-    print("--- CONEXÃO POLÍMNIA (VIA GROQ CLOUD 2026) ---")
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/perguntar', methods=['POST'])
+def perguntar():
+    pergunta = request.json.get('pergunta')
     
-    if not CHAVE_GROQ:
-        print("\n ERRO: Chave API não encontrada no arquivo .env!")
-        print("Crie um arquivo chamado .env e coloque: GROQ_API_KEY=sua_chave")
-        return
-
     try:
-        # Inicializa o cliente com a chave protegida
-        client = Groq(api_key=CHAVE_GROQ)
-        
-        print("Solicitando resposta da IA...")
-        
-        # Chamada ao modelo que validamos anteriormente
+        # 1. Busca resposta na Groq
         completion = client.chat.completions.create(
             model="llama-3.1-8b-instant",
-            messages=[
-                {
-                    "role": "user", 
-                    "content": "Confirme a conexão: Sistema Polímnia 2026 Online via Groq!"
-                }
-            ],
-            temperature=0.5
+            messages=[{"role": "user", "content": pergunta}]
         )
+        resposta = completion.choices[0].message.content
 
-        print("\n[RESPOSTA RECEBIDA]:")
-        print(f">>> {completion.choices[0].message.content}")
-        print("\n-------------------------------------------------")
-        print("STATUS: CONEXÃO VALIDADA E SEGURA!")
-
-    except Exception as e:
-        print(f"\n Erro técnico ao conectar: {e}")
-
-def salvar_no_postgres(pergunta, resposta):
-    try:
-        # Importe a função de conexão do database.py ou use direto aqui
-        from database import get_connection
+        # 2. Salva no Banco de Dados
         conn = get_connection()
         cursor = conn.cursor()
-        
-        # ITEM 3: Inserção de dados
-        sql = "INSERT INTO interacoes (usuario, pergunta, resposta) VALUES (%s, %s, %s)"
-        cursor.execute(sql, ("Ana/Luana", pergunta, resposta))
-        
+        cursor.execute(
+            "INSERT INTO interacoes (usuario, pergunta, resposta) VALUES (%s, %s, %s)",
+            ("Ana/Luana", pergunta, resposta)
+        )
         conn.commit()
         cursor.close()
         conn.close()
-        print("Log salvo no PostgreSQL!")
+
+        return jsonify({'resposta': resposta})
+
     except Exception as e:
-        print(f"Erro ao salvar: {e}")
+        return jsonify({'erro': str(e)}), 500
 
-if __name__ == "__main__":
-    validar_polimnia()
-
-    #teste apenas
+if __name__ == '__main__':
+    app.run(debug=True)
