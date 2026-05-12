@@ -113,6 +113,7 @@
           });
           const data = await response.json();
           box.innerText = data.resposta || "Erro ao processar.";
+          document.getElementById("pergunta").value = "";
         } catch (e) {
           box.innerText = "Erro na conexão.";
         }
