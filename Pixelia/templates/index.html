@@ -1,79 +1,122 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Projeto Polímnia</title>
     <style>
-        body { 
-            background-color: #F2D6B3; color: #8C1F33; 
-            font-family: 'Segoe UI', sans-serif; margin: 0; padding: 40px; 
-            display: flex; justify-content: center;
-        }
-        .container {
-            width: 100%; max-width: 900px; background: #ffffff;
-            padding: 35px; border-radius: 15px; 
-            box-shadow: 0 10px 30px rgba(140, 31, 51, 0.15);
-            border: 2px solid #F28585;
-        }
-        header { border-bottom: 3px solid #8C1F33; margin-bottom: 25px; padding-bottom: 10px; }
-        h1 { color: #8C1F33; margin: 0; font-size: 26px; }
-        
-        textarea { 
-            width: 100%; height: 100px; padding: 15px; border-radius: 8px;
-            border: 2px solid #F2DAAC; font-size: 16px; resize: none; box-sizing: border-box;
-            background-color: #fffaf5; outline: none;
-        }
-        button { 
-            width: 100%; background: #8C1F33; color: white; border: none; 
-            padding: 16px; border-radius: 8px; cursor: pointer; font-weight: bold;
-            margin-top: 15px; font-size: 16px;
-        }
-        
-        #resultado { 
-            margin-top: 30px; padding: 25px; background: #fafafa;
-            border-left: 6px solid #8C1F33; border-radius: 4px;
-            /* AJUSTE AQUI: pre-wrap permite quebrar linha e remove a barra de rolagem */
-            white-space: pre-wrap; 
-            word-wrap: break-word;
-            font-family: 'Consolas', 'Courier New', monospace; 
-            font-size: 15px; line-height: 1.4;
-            display: none; border: 1px solid #eee;
-        }
+      body {
+        background-color: #f2d6b3;
+        color: #8c1f33;
+        font-family: "Segoe UI", sans-serif;
+        margin: 0;
+        padding: 40px;
+        display: flex;
+        justify-content: center;
+      }
+      .container {
+        width: 100%;
+        max-width: 900px;
+        background: #ffffff;
+        padding: 35px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(140, 31, 51, 0.15);
+        border: 2px solid #f28585;
+      }
+      header {
+        border-bottom: 3px solid #8c1f33;
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+      }
+      h1 {
+        color: #8c1f33;
+        margin: 0;
+        font-size: 26px;
+      }
+
+      textarea {
+        width: 100%;
+        height: 100px;
+        padding: 15px;
+        border-radius: 8px;
+        border: 2px solid #f2daac;
+        font-size: 16px;
+        resize: none;
+        box-sizing: border-box;
+        background-color: #fffaf5;
+        outline: none;
+      }
+      button {
+        width: 100%;
+        background: #8c1f33;
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 15px;
+        font-size: 16px;
+      }
+
+      #resultado {
+        margin-top: 30px;
+        padding: 25px;
+        background: #fafafa;
+        border-left: 6px solid #8c1f33;
+        border-radius: 4px;
+        /* AJUSTE AQUI: pre-wrap permite quebrar linha e remove a barra de rolagem */
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: "Consolas", "Courier New", monospace;
+        font-size: 15px;
+        line-height: 1.4;
+        display: none;
+        border: 1px solid #eee;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <header>
-            <h1>PROJETO POLÍMNIA</h1>
-            <p style="color: #D95276; font-weight: bold;">Trabalho Ana e Luana.</p>
-        </header>
+      <header>
+        <h1>PROJETO POLÍMNIA</h1>
+        <p style="color: #d95276; font-weight: bold">Trabalho Ana e Luana.</p>
+      </header>
 
-        <textarea id="pergunta" placeholder="O que deseja?"></textarea>
-        <button onclick="gerarGrid()">Gerar</button>
+      <textarea id="pergunta" placeholder="O que deseja?"></textarea>
+      <button onclick="gerarGrid()">Gerar</button>
 
-        <div id="resultado"></div>
+      <div id="resultado"></div>
     </div>
 
     <script>
-        async function gerarGrid() {
-            const pergunta = document.getElementById('pergunta').value;
-            const box = document.getElementById('resultado');
-            if(!pergunta) return;
-            box.style.display = "block";
-            box.innerText = "Processando informações técnicas...";
+      const textarea = document.getElementById("pergunta");
 
-            try {
-                const response = await fetch('/perguntar', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ pergunta: pergunta })
-                });
-                const data = await response.json();
-                box.innerText = data.resposta || "Erro ao processar.";
-            } catch (e) {
-                box.innerText = "Erro na conexão.";
-            }
+      textarea.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          gerarGrid();
         }
+      });
+
+      async function gerarGrid() {
+        const pergunta = document.getElementById("pergunta").value;
+        const box = document.getElementById("resultado");
+        if (!pergunta) return;
+        box.style.display = "block";
+        box.innerText = "Processando informações técnicas...";
+
+        try {
+          const response = await fetch("/perguntar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pergunta: pergunta }),
+          });
+          const data = await response.json();
+          box.innerText = data.resposta || "Erro ao processar.";
+        } catch (e) {
+          box.innerText = "Erro na conexão.";
+        }
+      }
     </script>
-</body>
+  </body>
 </html>
