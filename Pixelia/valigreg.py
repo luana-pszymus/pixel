@@ -1,6 +1,7 @@
 import os
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
+
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -11,26 +12,51 @@ configurar_banco()
 
 app = Flask(__name__)
 
+# MODELO GROQ
 llm = ChatGroq(
-    temperature=0.4, 
+    temperature=0.4,
     model_name="llama-3.1-8b-instant",
     api_key=os.getenv("GROQ_API_KEY")
 )
 
-# PROMPT REFORÇADO: Bloqueia tabelas Markdown e foca em texto puro
+# PROMPT PRINCIPAL
 prompt_template = ChatPromptTemplate.from_messages([
     ("system", (
-        "Você é o Sistema Polímnia, especialista em Pixel Art técnica para o site ArtLif.\n\n"
-        "REGRAS DE FORMATO (CRUCIAL):\n"
-        "1. PROIBIDO usar tabelas Markdown (ex: |---|).\n"
-        "2. Se o usuário não definiu nada, sugira um tamanho pequeno (máximo 16x16) para não travar o site.\n"
-        "3. MAPA DE GRID: Deve ser um bloco de código de texto puro contendo apenas NÚMEROS e ESPAÇOS.\n\n"
-        "ESTRUTURA DA RESPOSTA:\n"
-        "1) PARÂMETROS TÉCNICOS: (Tamanho sugerido, Paleta de 5 cores HEX e funções).\n"
-        "2) MAPA DE GRID: Bloco de código com o desenho numérico.\n"
-        "3) GUIA MAKER: Dicas para usar EVA/Biscuit."
+        "Você é o Sistema Polímnia, especialista em Pixel Art criativa.\n\n"
+
+        "OBJETIVO PRINCIPAL:\n"
+        "O usuário descreve o que deseja criar e você sugere automaticamente:\n"
+        "- estilo visual\n"
+        "- tamanho ideal\n"
+        "- paleta de cores\n"
+        "- função de cada cor\n"
+        "- grid numérico da pixel art\n\n"
+
+        "REGRAS IMPORTANTES:\n"
+        "1. Nunca use tabelas Markdown.\n"
+        "2. Use apenas texto puro.\n"
+        "3. Se o usuário não definir tamanho, escolha automaticamente um tamanho pequeno.\n"
+        "4. O grid deve conter apenas números e espaços.\n"
+        "5. Seja criativo e artístico.\n\n"
+
+        "ESTRUTURA DA RESPOSTA:\n\n"
+
+        "IDEIA VISUAL:\n"
+        "Explique rapidamente como será a pixel art.\n\n"
+
+        "PALETA SUGERIDA:\n"
+        "Liste as cores HEX e explique para que serve cada cor.\n\n"
+
+        "GRID:\n"
+        "Mostre o mapa numérico alinhado.\n\n"
+
     )),
-    ("user", "Ideia: {pergunta}. Técnica Atual: [Tamanho: {tamanho}, Paleta: {paleta}, Significados: {significado}]")
+
+    ("user",
+     "Ideia: {pergunta}\n"
+     "Tamanho opcional: {tamanho}\n"
+     "Paleta opcional: {paleta}\n"
+     "Significados opcionais: {significado}")
 ])
 
 @app.route('/')
@@ -39,38 +65,54 @@ def index():
 
 @app.route('/perguntar', methods=['POST'])
 def perguntar():
+
     dados = request.json
+
     pergunta = dados.get('pergunta')
-    
-    # Se os campos estiverem vazios no front, passamos 'Não definido' para a IA sugerir
-    tamanho = dados.get('tamanho') or "Não definido (sugira algo pequeno)"
-    paleta = dados.get('paleta') or "Não definida (sugira 5 cores)"
+
+    tamanho = dados.get('tamanho') or "Não definido"
+    paleta = dados.get('paleta') or "Não definida"
     significado = dados.get('significado') or "Não definido"
 
     try:
+
         chain = prompt_template | llm
+
         response = chain.invoke({
+            "pergunta": pergunta,
             "tamanho": tamanho,
             "paleta": paleta,
-            "significado": significado,
-            "pergunta": pergunta
+            "significado": significado
         })
+
         resposta = response.content
 
-        # Salva no banco de dados
+        # SALVAR NO BANCO
         conn = get_connection()
         cursor = conn.cursor()
+
         cursor.execute(
-            "INSERT INTO interacoes (usuario, pergunta, resposta) VALUES (%s, %s, %s)", 
+            """
+            INSERT INTO interacoes
+            (usuario, pergunta, resposta)
+            VALUES (%s, %s, %s)
+            """,
             ("Equipe Polímnia", pergunta, resposta)
         )
+
         conn.commit()
+
         cursor.close()
         conn.close()
-        
-        return jsonify({'resposta': resposta})
+
+        return jsonify({
+            "resposta": resposta
+        })
+
     except Exception as e:
-        return jsonify({'erro': str(e)}), 500
+        return jsonify({
+            "erro": str(e)
+        }), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
