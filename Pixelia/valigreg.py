@@ -116,3 +116,13 @@ def perguntar():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+    #eu quero que a pessoa possa escolher o tamanho da pixel arte que ela queixa tipo 10x10 3x3 8x8 etc, ela possa mandar a paleta de cores dela e ele guarde a paleta dela, ele criei o grid com base na tabela de cores, que a pessoa possa especificar tambem o que cada cor da tabela dela serve exemplo
+ #F2D6B3 cor serve para pele, dar a grid exemplo cor #00000 é = 1 #ffffff =2 etc com as cores da paleta dela, paleta do site Poliminia #8C1F33
+#D95276
+
+#F2DAAC
+
+#F2D6B3
+
+#F28585
