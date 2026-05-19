@@ -195,6 +195,23 @@
         animation: pulse 1.5s infinite;
       }
 
+      .topo-paleta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .btn-editar {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+      }
+
+      .btn-editar:hover {
+        transform: scale(1.1);
+      }
+
       @keyframes pulse {
         0% {
           opacity: 0.5;
@@ -395,7 +412,23 @@
             });
 
             card.innerHTML = `
-              <strong>${p.nome}</strong>
+              <div class="topo-paleta">
+
+                <strong>${p.nome}</strong>
+
+                <button
+                  class="btn-editar"
+                  onclick="editarPaleta(
+                    ${p.id},
+                    '${p.nome}',
+                    '${p.cores}',
+                    '${p.significados || ""}'
+                  )"
+                >
+                  ✏️
+                </button>
+
+              </div>
               <div style="margin-top:8px;font-size:13px;">
                 ${p.significados || ""}
               </div>
@@ -427,6 +460,35 @@
         document.getElementById("significado").value = significados;
       }
 
+      async function editarPaleta(id, nome, cores, significados) {
+        const novoNome = prompt("Editar nome:", nome);
+
+        if (novoNome === null) return;
+
+        const novasCores = prompt("Editar cores:", cores);
+
+        if (novasCores === null) return;
+
+        const novosSignificados = prompt("Editar significados:", significados);
+
+        if (novosSignificados === null) return;
+
+        await fetch(`/editar_paleta/${id}`, {
+          method: "PUT",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            nome: novoNome,
+            cores: novasCores,
+            significados: novosSignificados,
+          }),
+        });
+
+        carregarPaletas();
+      }
       // =====================================================
       // INICIAR
       // =====================================================
