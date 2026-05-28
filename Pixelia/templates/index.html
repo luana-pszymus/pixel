@@ -5,223 +5,19 @@
 
     <title>Polímnia</title>
 
-    <style>
-      body {
-        background-color: #f2d6b3;
-        color: #8c1f33;
-        font-family: "Segoe UI", sans-serif;
-        margin: 0;
-        padding: 40px;
-      }
-
-      .layout {
-        display: flex;
-        gap: 25px;
-        width: 100%;
-        max-width: 1400px;
-        margin: auto;
-        align-items: flex-start;
-      }
-
-      /* SIDEBAR */
-
-      .sidebar {
-        width: 320px;
-        background: #ffffff;
-        border: 2px solid #f28585;
-        border-radius: 15px;
-        padding: 20px;
-        box-shadow: 0 10px 30px rgba(140, 31, 51, 0.1);
-
-        position: sticky;
-        top: 20px;
-
-        max-height: 85vh;
-        overflow-y: auto;
-      }
-
-      .sidebar h2 {
-        margin-top: 0;
-        color: #8c1f33;
-      }
-
-      .paleta-card {
-        background: #fffaf5;
-        border: 1px solid #f2daac;
-        border-radius: 10px;
-        padding: 12px;
-        margin-bottom: 15px;
-      }
-
-      .paleta-cores {
-        display: flex;
-        gap: 5px;
-        margin-top: 10px;
-        flex-wrap: wrap;
-      }
-
-      .cor {
-        width: 28px;
-        height: 28px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-      }
-
-      .btn-usar {
-        margin-top: 10px;
-        background: #d95276;
-        color: white;
-        border: none;
-        padding: 8px 10px;
-        border-radius: 6px;
-        cursor: pointer;
-        width: 100%;
-        font-weight: bold;
-      }
-
-      .btn-usar:hover {
-        background: #8c1f33;
-      }
-
-      /* CONTAINER */
-
-      .container {
-        flex: 1;
-        background: #ffffff;
-        padding: 35px;
-        border-radius: 15px;
-        border: 2px solid #f28585;
-        box-shadow: 0 10px 30px rgba(140, 31, 51, 0.15);
-      }
-
-      header {
-        border-bottom: 3px solid #8c1f33;
-        margin-bottom: 25px;
-        padding-bottom: 10px;
-      }
-
-      h1 {
-        margin: 0;
-      }
-
-      .instrucao {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 10px;
-        display: block;
-      }
-
-      textarea,
-      input {
-        width: 100%;
-        padding: 15px;
-        border-radius: 8px;
-        border: 2px solid #f2daac;
-        background-color: #fffaf5;
-        font-size: 16px;
-        outline: none;
-        box-sizing: border-box;
-      }
-
-      textarea {
-        height: 120px;
-        resize: none;
-      }
-
-      #secao-ajustes {
-        display: none;
-        margin-top: 15px;
-        padding: 20px;
-        background: #fafafa;
-        border-radius: 10px;
-        border: 1px dashed #8c1f33;
-      }
-
-      .grid-inputs {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        margin-top: 10px;
-      }
-
-      .btn-toggle {
-        background: none;
-        border: none;
-        color: #d95276;
-        cursor: pointer;
-        text-decoration: underline;
-        padding: 10px 0;
-        font-weight: bold;
-      }
-
-      .btn-gerar {
-        width: 100%;
-        background: #8c1f33;
-        color: white;
-        border: none;
-        padding: 18px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 18px;
-        margin-top: 15px;
-      }
-
-      .btn-gerar:hover {
-        background: #d95276;
-      }
-
-      #resultado {
-        margin-top: 30px;
-        padding: 25px;
-        background: #fffaf5;
-        color: #3a1a1a;
-        border-radius: 12px;
-
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        overflow-x: auto;
-
-        font-size: 15px;
-        line-height: 1.8;
-
-        display: none;
-
-        border: 2px solid #f2daac;
-      }
-
-      .loading {
-        opacity: 0.7;
-        animation: pulse 1.5s infinite;
-      }
-
-      @keyframes pulse {
-        0% {
-          opacity: 0.5;
-        }
-
-        50% {
-          opacity: 1;
-        }
-
-        100% {
-          opacity: 0.5;
-        }
-      }
-    </style>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
   </head>
 
   <body>
     <div class="layout">
-      <!-- SIDEBAR -->
-
       <aside class="sidebar">
         <h2>Paletas Salvas</h2>
 
         <div id="lista-paletas"></div>
       </aside>
-
-      <!-- CONTEÚDO -->
 
       <div class="container">
         <header>
@@ -236,11 +32,11 @@
 
         <textarea
           id="pergunta"
-          placeholder="Ex: floresta mágica noturna, espada medieval, estrela retrô..."
+          placeholder="Ex: floresta mágica noturna..."
         ></textarea>
 
         <button class="btn-toggle" onclick="toggleAjustes()">
-          + Ajustes avançados (opcional)
+          + Ajustes avançados
         </button>
 
         <div id="secao-ajustes">
@@ -248,7 +44,7 @@
             <div>
               <label>Tamanho:</label>
 
-              <input type="text" id="tamanho" placeholder="Ex: 16x16" />
+              <input type="text" id="tamanho" placeholder="16x16" />
             </div>
 
             <div>
@@ -264,7 +60,7 @@
             <input
               type="text"
               id="significado"
-              placeholder="Ex: vermelho = fogo"
+              placeholder="vermelho = fogo"
             />
           </div>
         </div>
@@ -277,161 +73,8 @@
       </div>
     </div>
 
-    <script>
-      // =====================================================
-      // MOSTRAR AJUSTES
-      // =====================================================
-
-      function toggleAjustes() {
-        const s = document.getElementById("secao-ajustes");
-
-        s.style.display = s.style.display === "block" ? "none" : "block";
-      }
-
-      // =====================================================
-      // ENTER
-      // =====================================================
-
-      const textarea = document.getElementById("pergunta");
-
-      textarea.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" && !event.shiftKey) {
-          event.preventDefault();
-
-          gerar();
-        }
-      });
-
-      // =====================================================
-      // GERAR
-      // =====================================================
-
-      async function gerar() {
-        const box = document.getElementById("resultado");
-
-        const pergunta = document.getElementById("pergunta").value;
-
-        if (!pergunta) {
-          alert("Dê uma ideia para a Polímnia!");
-
-          return;
-        }
-
-        box.style.display = "block";
-
-        box.classList.add("loading");
-
-        box.innerText = "Polímnia está criando sua direção artística...";
-
-        try {
-          const res = await fetch("/perguntar", {
-            method: "POST",
-
-            headers: {
-              "Content-Type": "application/json",
-            },
-
-            body: JSON.stringify({
-              pergunta: pergunta,
-
-              tamanho: document.getElementById("tamanho").value,
-
-              paleta: document.getElementById("paleta").value,
-
-              significado: document.getElementById("significado").value,
-            }),
-          });
-
-          const data = await res.json();
-
-          box.classList.remove("loading");
-
-          box.innerText = data.resposta || "Erro ao gerar.";
-
-          document.getElementById("pergunta").value = "";
-        } catch (e) {
-          box.classList.remove("loading");
-
-          box.innerText = "Erro na conexão.";
-        }
-      }
-
-      // =====================================================
-      // CARREGAR PALETAS
-      // =====================================================
-
-      // =====================================================
-      // CARREGAR PALETAS (ATUALIZADA)
-      // =====================================================
-
-      async function carregarPaletas() {
-        try {
-          const res = await fetch("/paletas");
-          const paletas = await res.json();
-          const lista = document.getElementById("lista-paletas");
-
-          lista.innerHTML = "";
-
-          paletas.forEach((p) => {
-            const card = document.createElement("div");
-            card.className = "paleta-card";
-
-            let coresHTML = "";
-
-            // TRATAMENTO: Remove quebras de linha e limpa espaços para o CSS ler as cores
-            const stringCores = p.cores.replace(/\n/g, ",").replace(/\s/g, "");
-            const cores = stringCores.split(",");
-
-            cores.forEach((cor) => {
-              if (cor.trim() !== "") {
-                coresHTML += `
-                  <div
-                    class="cor"
-                    style="background: ${cor.trim()};"
-                    title="${cor.trim()}"
-                  ></div>
-                `;
-              }
-            });
-
-            card.innerHTML = `
-              <strong>${p.nome}</strong>
-              <div style="margin-top:8px;font-size:13px;">
-                ${p.significados || ""}
-              </div>
-              <div class="paleta-cores">
-                ${coresHTML}
-              </div>
-              <button
-                class="btn-usar"
-                onclick="usarPaleta('${p.cores.replace(/\n/g, "\\n")}', '${p.significados || ""}')"
-              >
-                Usar Paleta
-              </button>
-            `;
-
-            lista.appendChild(card);
-          });
-        } catch (e) {
-          console.log(e);
-        }
-      }
-
-      // =====================================================
-      // USAR PALETA
-      // =====================================================
-
-      function usarPaleta(cores, significados) {
-        document.getElementById("paleta").value = cores;
-
-        document.getElementById("significado").value = significados;
-      }
-
-      // =====================================================
-      // INICIAR
-      // =====================================================
-
-      carregarPaletas();
-    </script>
+    <script
+      src="{{ url_for('static', filename='js/app.js') }}"
+    ></script>
   </body>
 </html>
