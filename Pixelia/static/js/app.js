@@ -76,6 +76,8 @@ async function gerar() {
         paleta: document.getElementById("paleta").value,
 
         significado: document.getElementById("significado").value,
+
+        modo: document.getElementById("modo").value,
       }),
     });
 

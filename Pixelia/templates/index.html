@@ -1,114 +1,90 @@
 <!doctype html>
 <html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
 
-<head>
-  <meta charset="UTF-8" />
+    <title>Polímnia</title>
 
-  <title>Polímnia</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
 
-  <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/style.css') }}"
-  />
-</head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <h2>Paletas Salvas</h2>
 
-<body>
+        <div id="lista-paletas"></div>
+      </aside>
 
-  <div class="layout">
+      <div class="container">
+        <header>
+          <h1>PROJETO POLÍMNIA</h1>
 
-    <aside class="sidebar">
+          <p style="color: #d95276; font-weight: bold">
+            Ana Vitória e Luana Gabrielly
+          </p>
+        </header>
 
-      <h2>Paletas Salvas</h2>
+        <label class="instrucao"> O que você quer criar? </label>
 
-      <div id="lista-paletas"></div>
+        <textarea
+          id="pergunta"
+          placeholder="Ex: floresta mágica noturna..."
+        ></textarea>
 
-    </aside>
+        <button class="btn-toggle" onclick="toggleAjustes()">
+          + Ajustes avançados
+        </button>
 
-    <div class="container">
+        <div id="secao-ajustes">
+          <div class="grid-inputs">
+            <div>
+              <label>Tamanho:</label>
 
-      <header>
+              <input type="text" id="tamanho" placeholder="16x16" />
+            </div>
 
-        <h1>PROJETO POLÍMNIA</h1>
+            <div>
+              <label>Paleta HEX:</label>
 
-        <p style="color: #d95276; font-weight: bold">
-          Ana Vitória e Luana Gabrielly
-        </p>
-
-      </header>
-
-      <label class="instrucao">
-
-        O que você quer criar?
-
-      </label>
-
-      <textarea
-        id="pergunta"
-        placeholder="Ex: floresta mágica noturna..."
-      ></textarea>
-
-      <button class="btn-toggle" onclick="toggleAjustes()">
-
-        + Ajustes avançados
-
-      </button>
-
-      <div id="secao-ajustes">
-
-        <div class="grid-inputs">
-
-          <div>
-
-            <label>Tamanho:</label>
-
-            <input type="text" id="tamanho" placeholder="16x16" />
-
+              <input type="text" id="paleta" placeholder="#FF0000, #00FF00" />
+            </div>
           </div>
 
-          <div>
+          <div style="margin-top: 15px">
+            <label>Função das cores:</label>
 
-            <label>Paleta HEX:</label>
-
-            <input
-              type="text"
-              id="paleta"
-              placeholder="#FF0000, #00FF00"
-            />
-
+            <input type="text" id="significado" placeholder="vermelho = fogo" />
           </div>
 
+          <div style="margin-top: 15px">
+            <label>Modo da IA:</label>
+
+            <select id="modo">
+              <option value="tecnico">Técnico</option>
+
+              <option value="resumido">Resumido</option>
+
+              <option value="professor">Professor</option>
+
+              <option value="detalhado">Detalhado</option>
+
+              <option value="suporte">Suporte Técnico</option>
+            </select>
+          </div>
         </div>
 
-        <div style="margin-top: 15px">
+        <button class="btn-gerar" onclick="gerar()">
+          CRIAR DIREÇÃO ARTÍSTICA
+        </button>
 
-          <label>Função das cores:</label>
-
-          <input
-            type="text"
-            id="significado"
-            placeholder="vermelho = fogo"
-          />
-
-        </div>
-
+        <div id="resultado"></div>
       </div>
-
-      <button class="btn-gerar" onclick="gerar()">
-
-        CRIAR DIREÇÃO ARTÍSTICA
-
-      </button>
-
-      <div id="resultado"></div>
-
     </div>
 
-  </div>
-
-  <script
-    src="{{ url_for('static', filename='js/app.js') }}"
-  ></script>
-
-</body>
-
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
 </html>

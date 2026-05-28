@@ -111,6 +111,9 @@ prompt_template = ChatPromptTemplate.from_messages([
     Ideia:
     {pergunta}
 
+    Modo:
+    {modo_ia}
+
     Tamanho:
     {tamanho}
 
@@ -231,6 +234,8 @@ def perguntar():
 
         dados = request.json
 
+        modo = dados.get("modo") or "tecnico"
+
         pergunta = dados.get("pergunta")
 
         # =====================================================
@@ -307,6 +312,24 @@ Significados: {p[2]}
         # =====================================================
         # PRIMEIRA IA - GROQ
         # =====================================================
+        modos = {
+
+            "tecnico":
+            "Responda tecnicamente e profissionalmente.",
+
+            "resumido":
+            "Responda de forma curta e resumida.",
+
+            "professor":
+            "Explique de forma didática como um professor.",
+
+            "detalhado":
+            "Explique detalhadamente e profundamente.",
+
+            "suporte":
+            "Responda como suporte técnico profissional."
+        }
+
 
         chain = prompt_template | llm
 
@@ -316,7 +339,8 @@ Significados: {p[2]}
             "tamanho": tamanho,
             "paleta": paleta,
             "significado": significado,
-            "paletas_salvas": paletas_salvas
+            "paletas_salvas": paletas_salvas,
+            "modo_ia": modos.get(modo)
 
         })
 
