@@ -5,7 +5,7 @@ function toggleAjustes() {
 }
 
 // =====================================================
-// ENTER
+// ENTER SOCORRO
 // =====================================================
 
 const textarea = document.getElementById("pergunta");
@@ -158,8 +158,8 @@ async function carregarPaletas() {
         <button
           class="btn-usar"
           onclick="usarPaleta('${p.cores.replace(/\n/g, "\\n")}', '${
-        p.significados || ""
-      }')"
+            p.significados || ""
+          }')"
         >
           Usar Paleta
         </button>
