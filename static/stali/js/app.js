@@ -5,7 +5,7 @@ function toggleAjustes() {
 }
 
 // =====================================================
-// ENTER SOCORRO
+// ENTER SOCOR
 // =====================================================
 
 const textarea = document.getElementById("pergunta");
