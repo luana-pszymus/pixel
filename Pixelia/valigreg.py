@@ -44,74 +44,65 @@ sambanova_client = OpenAI(
 
 prompt_template = ChatPromptTemplate.from_messages([
 
-    ("system",
-
-    """
-
+    ("""
     Você é o Sistema Polímnia.
 
-    O Polímnia é uma IA especialista em:
-    - direção de arte
+    Especialista em:
     - pixel art
+    - direção de arte
     - teoria das cores
     - iluminação
-    - sombreamento
     - consistência visual
-    - estilização visual
     - arte para jogos indie
 
     OBJETIVO:
-    Ajudar artistas e equipes de pixel art.
+    Ajudar artistas a manter consistência visual.
 
     IMPORTANTE:
     - NÃO use markdown
     - NÃO use **
-    - NÃO escreva textos gigantes
-    - NÃO faça respostas acadêmicas
-    - Seja organizado
-    - Seja visual
-    - Seja objetivo
+    - NÃO use listas enormes
+    - NÃO escreva textos longos
+    - NÃO explique demais
+    - NÃO aja como professor
+    - NÃO aja como chatbot
 
-    Respostas devem parecer notas rápidas
-    de direção artística usadas em estúdios indie.
+    As respostas devem parecer:
+    - notas rápidas de direção artística
+    - documentação visual de estúdio indie
+    - guia artístico curto e técnico
 
-    O usuário pode:
-    - enviar paletas
-    - definir funções das cores
-    - pedir direção artística
-    - pedir iluminação
-    - pedir sugestões
-    - pedir consistência visual
+    Sempre responda nesse formato:
 
-    Utilize prioritariamente:
-    - paletas do usuário
-    - estilos definidos
-    - funções das cores
+    CONCEITO
+    Máximo 2 linhas.
 
-    FORMATO DA RESPOSTA:
+    PALETA
+    Liste apenas:
+    HEX → função da cor
 
-    CONCEITO:
-    Explique a ideia visual em até 5 frase.
+    Exemplo:
+    #8EB9FC → luz
+    #274DEA → sombra
 
-    PALETA:
-    Mostre as cores principais.
-    Explique rapidamente cada uma.
+    ILUMINAÇÃO
+    Máximo 2 linhas.
 
-    ILUMINAÇÃO:
-    Explique a luz.
+    SOMBRA
+    Máximo 2 linhas.
 
-    SOMBRA:
-    Explique  o sombreamento.
+    ESTILO
+    Máximo 1 linha.
 
-    ESTILO:
-    Explique o estilo artístico em poucas palavras.
+    EXTRA
+    Máximo 1 sugestão útil.
 
-    SUGESTÃO EXTRA:
-    até 5  sugestão útil.
-
-    """ 
-
-    ),
+    IMPORTANTE:
+    Respostas curtas.
+    Diretas.
+    Visuais.
+    Profissionais.
+    """),
 
     ("user",
 
@@ -189,6 +180,46 @@ def listar_paletas():
             "erro": str(e)
         }), 500
 
+@app.route('/editar_paleta/<int:id>', methods=['PUT'])
+def editar_paleta(id):
+
+    try:
+
+        dados = request.json
+
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            UPDATE paletas
+            SET nome=%s,
+                cores=%s,
+                significados=%s
+            WHERE id=%s
+            """,
+            (
+                dados.get("nome"),
+                dados.get("cores"),
+                dados.get("significados"),
+                id
+            )
+        )
+
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({
+            "mensagem": "Paleta atualizada!"
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "erro": str(e)
+        }), 500
 # =====================================================
 # IA PRINCIPAL
 # =====================================================
@@ -369,10 +400,39 @@ Erro: {str(e)}
 """
 
         # =====================================================
-        # SALVAR PALETA
+        # SALVAR PALETA GERADA PELA IA
         # =====================================================
 
-        if paleta.strip() != "":
+        import re
+
+        # procura HEX na resposta
+        hex_cores = re.findall(
+            r'#[0-9A-Fa-f]{6}',
+            resposta_final
+        )
+
+        # remove duplicadas
+        hex_cores = list(dict.fromkeys(hex_cores))
+
+        # paleta padrão do sistema
+        paleta_padrao = [
+            "#8C1F33",
+            "#D95276",
+            "#F2DAAC",
+            "#F2D6B3",
+            "#F28585"
+        ]
+
+        # remove cores padrão
+        cores_filtradas = [
+            cor for cor in hex_cores
+            if cor.upper() not in [p.upper() for p in paleta_padrao]
+        ]
+
+        # salva apenas se houver novas cores
+        if len(cores_filtradas) > 0:
+
+            cores_geradas = ", ".join(cores_filtradas)
 
             cursor.execute(
                 """
@@ -382,9 +442,9 @@ Erro: {str(e)}
                 """,
                 (
                     pergunta,
-                    paleta,
+                    cores_geradas,
                     significado,
-                    "geral"
+                    "gerada_por_ia"
                 )
             )
 
@@ -419,6 +479,9 @@ Erro: {str(e)}
         return jsonify({
             "erro": str(e)
         }), 500
+
+        
+    
 
 # =====================================================
 # START

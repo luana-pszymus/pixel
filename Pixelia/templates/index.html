@@ -1,80 +1,114 @@
 <!doctype html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
 
-    <title>Polímnia</title>
+<head>
+  <meta charset="UTF-8" />
 
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
-    />
-  </head>
+  <title>Polímnia</title>
 
-  <body>
-    <div class="layout">
-      <aside class="sidebar">
-        <h2>Paletas Salvas</h2>
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}"
+  />
+</head>
 
-        <div id="lista-paletas"></div>
-      </aside>
+<body>
 
-      <div class="container">
-        <header>
-          <h1>PROJETO POLÍMNIA</h1>
+  <div class="layout">
 
-          <p style="color: #d95276; font-weight: bold">
-            Ana Vitória e Luana Gabrielly
-          </p>
-        </header>
+    <aside class="sidebar">
 
-        <label class="instrucao"> O que você quer criar? </label>
+      <h2>Paletas Salvas</h2>
 
-        <textarea
-          id="pergunta"
-          placeholder="Ex: floresta mágica noturna..."
-        ></textarea>
+      <div id="lista-paletas"></div>
 
-        <button class="btn-toggle" onclick="toggleAjustes()">
-          + Ajustes avançados
-        </button>
+    </aside>
 
-        <div id="secao-ajustes">
-          <div class="grid-inputs">
-            <div>
-              <label>Tamanho:</label>
+    <div class="container">
 
-              <input type="text" id="tamanho" placeholder="16x16" />
-            </div>
+      <header>
 
-            <div>
-              <label>Paleta HEX:</label>
+        <h1>PROJETO POLÍMNIA</h1>
 
-              <input type="text" id="paleta" placeholder="#FF0000, #00FF00" />
-            </div>
+        <p style="color: #d95276; font-weight: bold">
+          Ana Vitória e Luana Gabrielly
+        </p>
+
+      </header>
+
+      <label class="instrucao">
+
+        O que você quer criar?
+
+      </label>
+
+      <textarea
+        id="pergunta"
+        placeholder="Ex: floresta mágica noturna..."
+      ></textarea>
+
+      <button class="btn-toggle" onclick="toggleAjustes()">
+
+        + Ajustes avançados
+
+      </button>
+
+      <div id="secao-ajustes">
+
+        <div class="grid-inputs">
+
+          <div>
+
+            <label>Tamanho:</label>
+
+            <input type="text" id="tamanho" placeholder="16x16" />
+
           </div>
 
-          <div style="margin-top: 15px">
-            <label>Função das cores:</label>
+          <div>
+
+            <label>Paleta HEX:</label>
 
             <input
               type="text"
-              id="significado"
-              placeholder="vermelho = fogo"
+              id="paleta"
+              placeholder="#FF0000, #00FF00"
             />
+
           </div>
+
         </div>
 
-        <button class="btn-gerar" onclick="gerar()">
-          CRIAR DIREÇÃO ARTÍSTICA
-        </button>
+        <div style="margin-top: 15px">
 
-        <div id="resultado"></div>
+          <label>Função das cores:</label>
+
+          <input
+            type="text"
+            id="significado"
+            placeholder="vermelho = fogo"
+          />
+
+        </div>
+
       </div>
+
+      <button class="btn-gerar" onclick="gerar()">
+
+        CRIAR DIREÇÃO ARTÍSTICA
+
+      </button>
+
+      <div id="resultado"></div>
+
     </div>
 
-    <script
-      src="{{ url_for('static', filename='js/app.js') }}"
-    ></script>
-  </body>
+  </div>
+
+  <script
+    src="{{ url_for('static', filename='js/app.js') }}"
+  ></script>
+
+</body>
+
 </html>
