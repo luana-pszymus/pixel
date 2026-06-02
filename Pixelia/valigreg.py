@@ -44,65 +44,80 @@ sambanova_client = OpenAI(
 
 prompt_template = ChatPromptTemplate.from_messages([
 
-    ("""
-    Você é o Sistema Polímnia.
+    (
+        "system",
+        """
+        Você é o Sistema Polímnia.
 
-    Especialista em:
-    - pixel art
-    - direção de arte
-    - teoria das cores
-    - iluminação
-    - consistência visual
-    - arte para jogos indie
+        Especialista em:
+        - pixel art
+        - direção de arte
+        - teoria das cores
+        - iluminação
+        - consistência visual
+        - arte para jogos indie
 
-    OBJETIVO:
-    Ajudar artistas a manter consistência visual.
+        OBJETIVO:
+        Ajudar artistas a manter consistência visual.
 
-    IMPORTANTE:
-    - NÃO use markdown
-    - NÃO use **
-    - NÃO use listas enormes
-    - NÃO escreva textos longos
-    - NÃO explique demais
-    - NÃO aja como professor
-    - NÃO aja como chatbot
+        IMPORTANTE:
+        - NÃO use markdown
+        - NÃO use **
+        - NÃO use listas enormes
+        - NÃO escreva textos longos
+        - NÃO explique demais
+        - NÃO aja como professor
+        - NÃO aja como chatbot
 
-    As respostas devem parecer:
-    - notas rápidas de direção artística
-    - documentação visual de estúdio indie
-    - guia artístico curto e técnico
+        As respostas devem parecer:
+        - notas rápidas de direção artística
+        - documentação visual de estúdio indie
+        - guia artístico curto e técnico
 
-    Sempre responda nesse formato:
+        Sempre responda nesse formato:
 
-    CONCEITO
-    Máximo 2 linhas.
+        CONCEITO
+        Máximo 2 linhas.
 
-    PALETA
-    Liste apenas:
-    HEX → função da cor
+        PALETA
 
-    Exemplo:
-    #8EB9FC → luz
-    #274DEA → sombra
+        Sempre gere entre 4 e 8 cores HEX.
 
-    ILUMINAÇÃO
-    Máximo 2 linhas.
+        Obrigatório utilizar formato:
 
-    SOMBRA
-    Máximo 2 linhas.
+        #XXXXXX → função
+        #XXXXXX → função
+        #XXXXXX → função
 
-    ESTILO
-    Máximo 1 linha.
+        Nunca descreva cores sem HEX.
+        Nunca omita a seção PALETA.
 
-    EXTRA
-    Máximo 1 sugestão útil.
+        Exemplo:
+        #8EB9FC → luz
+        #274DEA → sombra
 
-    IMPORTANTE:
-    Respostas curtas.
-    Diretas.
-    Visuais.
-    Profissionais.
-    """),
+        ILUMINAÇÃO
+        Máximo 2 linhas.
+
+        SOMBRA
+        Máximo 2 linhas.
+
+        ESTILO
+        Máximo 1 linha.
+
+        EXTRA
+        Máximo 1 sugestão útil.
+
+        IMPORTANTE:
+        Respostas curtas.
+        Diretas.
+        Visuais.
+        Profissionais.
+
+        Se nenhuma paleta for fornecida pelo usuário,
+        crie uma paleta completamente nova adequada ao tema.
+        """
+        ),
 
     ("user",
 
@@ -223,6 +238,43 @@ def editar_paleta(id):
         return jsonify({
             "erro": str(e)
         }), 500
+    
+
+
+    # =====================================================
+# APAGAR PALETA
+# =====================================================
+
+@app.route('/deletar_paleta/<int:id>', methods=['DELETE'])
+def deletar_paleta(id):
+
+    try:
+
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            DELETE FROM paletas
+            WHERE id = %s
+            """,
+            (id,)
+        )
+
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({
+            "mensagem": "Paleta removida com sucesso."
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "erro": str(e)
+        }), 500
 # =====================================================
 # IA PRINCIPAL
 # =====================================================
@@ -271,9 +323,7 @@ def perguntar():
 
         tamanho = dados.get("tamanho") or "Automático"
 
-        paleta = dados.get("paleta") or """
-#8C1F33, #D95276, #F2DAAC, #F2D6B3, #F28585
-"""
+        paleta = dados.get("paleta", "").strip()
 
         significado = dados.get("significado") or "Não definido"
 
@@ -314,20 +364,41 @@ Significados: {p[2]}
         # =====================================================
         modos = {
 
-            "tecnico":
-            "Responda tecnicamente e profissionalmente.",
+            "tecnico": """
+            Seja técnico.
+            Use linguagem profissional.
+            Foque em direção de arte.
+            Evite explicações longas.
+            """,
 
-            "resumido":
-            "Responda de forma curta e resumida.",
+            "resumido": """
+            Seja extremamente breve.
+            Máximo 1 frase por seção.
+            Responda apenas o essencial.
+            """,
 
-            "professor":
-            "Explique de forma didática como um professor.",
+            "professor": """
+            Explique as escolhas artísticas.
+            Ensine teoria das cores.
+            Explique iluminação e sombras.
+            Use linguagem didática.
+            """,
 
-            "detalhado":
-            "Explique detalhadamente e profundamente.",
+            "detalhado": """
+            Forneça uma análise aprofundada.
+            Explique conceito visual.
+            Explique paleta.
+            Explique iluminação.
+            Explique sombras.
+            Explique consistência visual.
+            """,
 
-            "suporte":
-            "Responda como suporte técnico profissional."
+            "suporte": """
+            Responda como documentação técnica.
+            Seja objetivo.
+            Foque em implementação.
+            Foque em padronização.
+            """
         }
 
 
@@ -376,10 +447,23 @@ Significados: {p[2]}
                         - melhorar consistência
 
                         IMPORTANTE:
-                        - respostas curtas
                         - sem markdown
                         - sem listas enormes
                         - linguagem visual e profissional
+
+                        IMPORTANTE:
+
+                        NUNCA remova os códigos HEX.
+
+                        Se houver paleta,
+                        mantenha exatamente os códigos HEX.
+
+                        Exemplo:
+
+                        #8EB9FC → luz
+                        #274DEA → sombra
+
+                        Os HEX são obrigatórios.
 
                         """
 
@@ -391,20 +475,23 @@ Significados: {p[2]}
                         "content":
 
                         f"""
+                            Pedido do usuário:
+                            {pergunta}
 
-                        Pedido do usuário:
-                        {pergunta}
+                            Modo solicitado:
+                            {modo}
 
-                        Resposta inicial da IA:
-                        {resposta_groq}
+                            Resposta inicial:
+                            {resposta_groq}
 
-                        Melhore essa resposta.
-                        Deixe mais curta.
-                        Mais organizada.
-                        Mais visual.
-                        Mais profissional.
+                            Mantenha o mesmo modo solicitado.
 
-                        """
+                            Não reduza conteúdo se o modo for:
+                            - professor
+                            - detalhado
+
+                            Apenas reorganize e melhore a clareza.
+                            """
 
                     }
 
@@ -429,11 +516,17 @@ Erro: {str(e)}
 
         import re
 
+        print("\n===== RESPOSTA FINAL =====")
+        print(resposta_final)
+        print("==========================\n")
+
         # procura HEX na resposta
         hex_cores = re.findall(
-            r'#[0-9A-Fa-f]{6}',
-            resposta_final
-        )
+        r'#[0-9A-Fa-f]{6}',
+        resposta_groq
+)
+
+        print("HEX encontrados:", hex_cores)
 
         # remove duplicadas
         hex_cores = list(dict.fromkeys(hex_cores))

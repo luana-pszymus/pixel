@@ -205,6 +205,35 @@ textarea {
   animation: pulse 1.5s infinite;
 }
 
+.btn-editar {
+  width: 100%;
+  margin-top: 8px;
+  background: #f28585;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-editar:hover {
+  background: #8c1f33;
+}
+
+.btn-editar,
+.btn-deletar {
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.btn-deletar {
+  background: #f28585;
+  color: white;
+}
+
 @keyframes pulse {
   0% {
     opacity: 0.5;

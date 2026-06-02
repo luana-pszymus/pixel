@@ -157,16 +157,36 @@ async function carregarPaletas() {
           ${coresHTML}
         </div>
 
+        <div style="display:flex; gap:5px; margin-top:10px;">
+
         <button
           class="btn-usar"
-          onclick="usarPaleta('${p.cores.replace(/\n/g, "\\n")}', '${
-            p.significados || ""
-          }')"
+          onclick="usarPaleta('${p.cores.replace(/\n/g, "\\n")}', '${p.significados || ""}')"
         >
-          Usar Paleta
+          Usar
+        </button>
+
+        <button
+          class="btn-deletar"
+          onclick="deletarPaleta(${p.id})"
+        >
+          🗑️
+        </button>
+
+      </div>
+
+        <button
+          class="btn-editar"
+          onclick="editarPaleta(
+            ${p.id},
+            \`${p.nome}\`,
+            \`${p.cores}\`,
+            \`${p.significados || ""}\`
+          )"
+        >
+          ✏️ Editar
         </button>
       `;
-
       lista.appendChild(card);
     });
   } catch (e) {
@@ -182,6 +202,62 @@ function usarPaleta(cores, significados) {
   document.getElementById("paleta").value = cores;
 
   document.getElementById("significado").value = significados;
+}
+
+async function editarPaleta(id, nomeAtual, coresAtual, significadoAtual) {
+  const novoNome = prompt("Nome da paleta:", nomeAtual);
+
+  if (novoNome === null) return;
+
+  const novasCores = prompt("Cores HEX:", coresAtual);
+
+  if (novasCores === null) return;
+
+  const novoSignificado = prompt("Significados:", significadoAtual);
+
+  if (novoSignificado === null) return;
+
+  try {
+    const res = await fetch(`/editar_paleta/${id}`, {
+      method: "PUT",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        nome: novoNome,
+        cores: novasCores,
+        significados: novoSignificado,
+      }),
+    });
+
+    const data = await res.json();
+
+    alert(data.mensagem);
+
+    carregarPaletas();
+  } catch (e) {
+    console.error(e);
+
+    alert("Erro ao editar paleta.");
+  }
+}
+
+async function deletarPaleta(id) {
+  const confirmar = confirm("Deseja realmente apagar esta paleta?");
+
+  if (!confirmar) return;
+
+  try {
+    await fetch(`/deletar_paleta/${id}`, {
+      method: "DELETE",
+    });
+
+    carregarPaletas();
+  } catch (e) {
+    alert("Erro ao apagar paleta.");
+  }
 }
 
 // =====================================================
